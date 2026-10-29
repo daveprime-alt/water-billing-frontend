@@ -15,6 +15,7 @@ import { ErrorState, Field, LoadingState, PageTitle } from '../components/ui/ind
 export function ProfilePage() {
   const queryClient = useQueryClient()
   const user = useAuthStore((state) => state.user)
+  const updateUser = useAuthStore((state) => state.updateUser)
   const profileQuery = useQuery({ queryKey: ['profile'], queryFn: api.getProfile })
   const schema = z.object({
     firstName: z.string().trim().min(1, 'First name is required'),
@@ -31,9 +32,16 @@ export function ProfilePage() {
   const { register, handleSubmit, formState: { errors, isDirty } } = useForm({ resolver: zodResolver(schema), values: profileValues })
   const updateMutation = useMutation({
     mutationFn: api.updateProfile,
-    onSuccess: () => { toast.success('Profile updated.'); queryClient.invalidateQueries({ queryKey: ['profile'] }) },
+    onSuccess: (updatedProfile, values) => {
+      const savedProfile = { ...values, ...updatedProfile }
+      updateUser(savedProfile)
+      queryClient.setQueryData(['profile'], (profile) => ({ ...profile, ...savedProfile }))
+      toast.success('Profile updated.')
+      queryClient.invalidateQueries({ queryKey: ['profile'] })
+    },
     onError: (error) => toast.error(getMessage(error)),
   })
+  const displayedUser = profileQuery.data || user
   return <>
     <PageTitle eyebrow="ACCOUNT / PROFILE" title="My profile" description="Manage the personal details associated with your utility account." />
     <div className="bento-grid profile-grid">
@@ -52,7 +60,7 @@ export function ProfilePage() {
           </form>}
       </section>
       <aside className="bento-card span-1 profile-side">
-        <div className="eyebrow">ACCOUNT ACCESS</div><span className="profile-avatar-large">{user.firstName?.[0] || 'U'}{user.lastName?.[0] || ''}</span><h3>{nameOf(profileQuery.data || user)}</h3><span className="role-chip">{roleLabels[user.role]}</span>
+        <div className="eyebrow">ACCOUNT ACCESS</div><span className="profile-avatar-large">{displayedUser.firstName?.[0] || 'U'}{displayedUser.lastName?.[0] || ''}</span><h3>{nameOf(displayedUser)}</h3><span className="role-chip">{roleLabels[user.role]}</span>
         <div className="summary-divider" />
         <div className="summary-row"><span>Phone</span><b>{profileQuery.data?.phoneNumber || user.phoneNumber || '—'}</b></div>
         <div className="summary-row"><span>Account</span><b>{profileQuery.data?.accountNumber || user.accountNumber || '—'}</b></div>

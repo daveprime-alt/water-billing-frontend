@@ -10,6 +10,9 @@ export const useAuthStore = create(persist((set) => ({
     user: response.user,
     mustChangePassword: Boolean(response.mustChangePassword),
   }),
+  updateUser: (updates) => set((state) => ({
+    user: state.user ? { ...state.user, ...updates } : state.user,
+  })),
   clearSession: () => set({ token: null, user: null, mustChangePassword: false }),
 }), {
   name: 'clearwater-session',

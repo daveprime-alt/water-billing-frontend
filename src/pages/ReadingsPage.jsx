@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod/v3'
-import { AlertCircle, Check, Gauge, Plus, RefreshCw } from 'lucide-react'
+import { Check, Gauge, Plus, RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
 import { api, formatMonth } from '../services/api.js'
 import { useAuthStore } from '../stores/authStore.js'
@@ -78,11 +78,11 @@ export function ReadingsPage() {
   const recordedMonthCount = new Set(filteredReadings.map(readingMonth).filter(Boolean)).size
   const readingTaker = (reading) => {
     const taker = reading.recordedBy ?? reading.reader ?? reading.createdBy ?? reading.meterReader ?? reading.recorder
-    if (typeof taker === 'string') return taker || 'Not provided by API'
+    if (typeof taker === 'string') return taker || 'Not provided'
     if (taker && typeof taker === 'object') {
-      return [taker.firstName, taker.middleName, taker.lastName].filter(Boolean).join(' ') || taker.name || taker.email || 'Not provided by API'
+      return [taker.firstName, taker.middleName, taker.lastName].filter(Boolean).join(' ') || taker.name || taker.email || 'Not provided'
     }
-    return reading.recordedByName || reading.readerName || reading.createdByName || 'Not provided by API'
+    return reading.recordedByName || reading.readerName || reading.createdByName || 'Not provided'
   }
   const billingMonth = currentUtcBillingMonth()
   const submitEdit = handleEditSubmit(({ currentReading }) => {
@@ -93,7 +93,7 @@ export function ReadingsPage() {
     updateMutation.mutate({ id: editing.id, currentReading })
   })
   return <>
-    <PageTitle eyebrow="FIELD OPERATIONS / READINGS" title={role === 'ADMIN' ? 'Reading register' : 'Meter readings'} description={role === 'ADMIN' ? 'Review all meter readings and resolve exceptions.' : 'Record and review your current-month meter readings.'}
+    <PageTitle eyebrow={role === 'ADMIN' ? 'READINGS' : 'METER READINGS'} title={role === 'ADMIN' ? 'Reading register' : 'Meter readings'} description={role === 'ADMIN' ? 'Review all meter readings and resolve exceptions.' : 'Select a consumer and enter the current number shown on their meter.'}
       action={<button className="button button-primary" onClick={() => { reset(); setSelectedCustomer(null); setShowForm((value) => !value) }}><Plus size={16} /> Record reading</button>} />
     <div className="bento-grid readings-grid">
       <section className="bento-card span-3 table-card">
@@ -122,15 +122,14 @@ export function ReadingsPage() {
           </tr>)}</tbody></table></div>}
       </section>
       <aside className="bento-card span-1 reading-side">
-        <div className="eyebrow">FIELD GUIDANCE</div><h3>Accurate by design</h3><p>Enter the current meter register value exactly as it appears. The API calculates previous reading, usage, invoice amount, and any review hold.</p>
-        <div className="reading-guideline"><Check size={15} /><span>Whole numbers from 0 to 99,999</span></div>
-        <div className="reading-guideline"><Check size={15} /><span>One reading per customer each month</span></div>
-        <div className="reading-guideline"><Check size={15} /><span>Higher usage may be held for admin review</span></div>
-        <div className="notice notice-info"><AlertCircle size={16} /><div><strong>Consumer search available</strong><p>Search the directory for consumer accounts. The API returns consumer records only for reader-role searches.</p></div></div>
+        <div className="eyebrow">METER READING</div><h3>How to record a reading</h3>
+        <div className="reading-guideline"><Check size={15} /><span>Find and select the consumer account.</span></div>
+        <div className="reading-guideline"><Check size={15} /><span>Enter the current number shown on the meter.</span></div>
+        <div className="reading-guideline"><Check size={15} /><span>Enter a whole number from 0 to 99,999. Record each consumer once per month.</span></div>
       </aside>
     </div>
     {showForm && <Modal title="Record meter reading" onClose={() => { reset(); setSelectedCustomer(null); setShowForm(false) }}>
-      <p className="modal-intro">Find a consumer account in the directory before entering the current meter value.</p>
+      <p className="modal-intro">Select the consumer, then enter the current number shown on the meter.</p>
       <form className="form-stack" onSubmit={handleSubmit((values) => recordMutation.mutate(values))} noValidate>
         <UserDirectorySearch
           roles={['CONSUMER']}
@@ -159,6 +158,6 @@ export function ReadingsPage() {
         <div className="modal-actions"><button type="button" className="button button-secondary" onClick={() => setEditing(null)}>Cancel</button><button className="button button-primary" disabled={updateMutation.isPending}>{updateMutation.isPending ? 'Saving…' : 'Save correction'}</button></div>
       </form>
     </Modal>}
-    {deleting && <ConfirmDialog title="Delete this reading?" description="The backend rejects deletion if an invoice or later dependent reading exists." confirmLabel="Delete reading" danger busy={deleteMutation.isPending} onClose={() => setDeleting(null)} onConfirm={() => deleteMutation.mutate(deleting.id)} />}
+    {deleting && <ConfirmDialog title="Delete this reading?" description="This reading cannot be deleted if an invoice or later reading depends on it." confirmLabel="Delete reading" danger busy={deleteMutation.isPending} onClose={() => setDeleting(null)} onConfirm={() => deleteMutation.mutate(deleting.id)} />}
   </>
 }

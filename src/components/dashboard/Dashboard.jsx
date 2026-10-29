@@ -41,7 +41,7 @@ export function Dashboard() {
   const invoiceAmountDue = latestInvoice?.closingReceivableCents ?? latestInvoice?.currentBillCents
   const consumptionUnits = latestInvoice?.consumptionUnits
   const hasConsumptionUnits = consumptionUnits !== null && consumptionUnits !== undefined && Number.isFinite(Number(consumptionUnits))
-  const roleColorName = role === 'ADMIN' ? 'purple' : role === 'READER' ? 'red' : 'blue'
+  const roleColorName = role === 'ADMIN' ? 'green' : role === 'READER' ? 'red' : 'blue'
   const cycle = formatMonth(new Date())
   const title = role === 'ADMIN' ? 'System overview' : role === 'READER' ? 'Field overview' : 'Your monthly bill'
   const description = role === 'ADMIN' ? 'A live view of billing activity across your utility.' : role === 'READER' ? 'Your current field activity and meter reading log.' : 'See your latest water charge, usage, and payment prompt.'
@@ -89,7 +89,7 @@ export function Dashboard() {
         {role !== 'CONSUMER' && <section className="bento-card welcome-card span-3" aria-labelledby="welcome-title">
           <div className="welcome-top"><span className="welcome-icon"><Droplets size={18} /></span><span className="live-chip">UTILITY PORTAL</span></div>
           <div className="welcome-body">
-            <div><div className="eyebrow">GOOD TO SEE YOU, {profile?.firstName || user.firstName || 'THERE'}</div><h2 id="welcome-title">Welcome back, {profile?.firstName || user.firstName || 'there'}.</h2><p>{description}</p></div>
+            <div><h2 id="welcome-title">Good to see you, {profile?.firstName || user.firstName || 'there'}.</h2><p>{description}</p></div>
             <div className="welcome-meta">
               <div><span>Current cycle</span><b>{cycle}</b></div>
               <div><span>Service location</span><b>{profile?.location || user.location || 'Not set'}</b></div>

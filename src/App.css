@@ -8,14 +8,99 @@
   --role-tint: #eaf6fc;
 }
 .app-shell.role-admin,
-.dashboard-page.purple {
-  --role-accent: var(--purple);
-  --role-tint: #f3efff;
+.dashboard-page.green {
+  --role-accent: var(--green);
+  --role-tint: #ecfdf5;
 }
 .app-shell.role-reader,
 .dashboard-page.red {
   --role-accent: var(--red);
   --role-tint: #fff0f0;
+}
+.app-shell .avatar {
+  color: var(--role-accent);
+  background: var(--role-tint);
+  border-color: color-mix(in srgb, var(--role-accent) 20%, #fff);
+}
+.app-shell .account-identity b {
+  color: var(--role-accent);
+}
+.app-shell .brand-mark {
+  color: var(--role-accent);
+  background: var(--role-tint);
+}
+.app-toaster {
+  --width: min(380px, calc(100vw - 32px));
+  --toast-accent: var(--blue);
+  --toast-tint: #eaf6fc;
+}
+.app-toaster.role-admin {
+  --toast-accent: var(--green);
+  --toast-tint: #ecfdf5;
+}
+.app-toaster.role-reader {
+  --toast-accent: var(--red);
+  --toast-tint: #fff0f0;
+}
+.app-toaster [data-sonner-toast][data-styled='true'] {
+  position: relative;
+  overflow: hidden;
+  min-height: 76px;
+  padding: 18px 42px 18px 20px;
+  color: var(--text);
+  background: #fff;
+  border: 1px solid color-mix(in srgb, var(--toast-accent) 20%, #fff);
+  border-radius: 16px;
+  box-shadow: 0 14px 36px rgba(20, 32, 45, 0.13), 0 2px 7px rgba(20, 32, 45, 0.06);
+  backdrop-filter: blur(14px);
+}
+.app-toaster [data-sonner-toast][data-styled='true']::before {
+  position: absolute;
+  inset: 12px auto 12px 0;
+  width: 4px;
+  content: '';
+  background: var(--toast-accent);
+  border-radius: 0 4px 4px 0;
+}
+.app-toaster [data-sonner-toast][data-styled='true'] [data-icon] {
+  width: 20px;
+  height: 20px;
+  color: var(--toast-accent);
+}
+.app-toaster [data-sonner-toast][data-styled='true'] [data-title] {
+  font-family: "DM Sans", Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.app-toaster [data-sonner-toast][data-styled='true'] [data-description] {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+.app-toaster [data-sonner-toast][data-styled='true'] [data-close-button] {
+  top: 12px;
+  right: 12px;
+  left: auto;
+  width: 24px;
+  height: 24px;
+  transform: none;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.86);
+  border-color: var(--border);
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(20, 32, 45, 0.06);
+}
+.app-toaster [data-sonner-toast][data-styled='true'] [data-button] {
+  color: #fff;
+  background: var(--toast-accent);
+  border-radius: 8px;
+}
+.app-toaster [data-sonner-toast][data-styled='true'] [data-button]:hover {
+  background: color-mix(in srgb, var(--toast-accent) 88%, #111);
+}
+.app-toaster [data-sonner-toast][data-styled='true']:focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--toast-accent) 24%, transparent), 0 14px 36px rgba(20, 32, 45, 0.13);
 }
 .sidebar {
   width: 248px;
@@ -2028,14 +2113,14 @@ td b {
   --role-tint: #eaf6fc;
 }
 .auth-layout-compact.role-admin {
-  --role-accent: var(--purple);
-  --role-tint: #f3efff;
+  --role-accent: var(--green);
+  --role-tint: #ecfdf5;
 }
 .auth-layout-compact.role-reader {
   --role-accent: var(--red);
   --role-tint: #fff0f0;
 }
-.auth-layout-compact.role-reader .auth-brand .brand-mark {
+.auth-layout-compact .auth-brand .brand-mark {
   background: var(--role-tint);
   color: var(--role-accent);
 }
@@ -2050,20 +2135,16 @@ td b {
   background: #fff3f3;
   border-color: #f2d5d8;
 }
-.auth-layout-compact.role-admin .auth-brand .brand-mark {
-  background: var(--role-tint);
-  color: var(--role-accent);
-}
 .auth-layout-compact.role-admin .auth-aside {
-  background: #33205a;
+  background: #123c31;
 }
 .auth-layout-compact.role-admin .aside-kicker > span {
-  background: #b794f6;
+  background: #6ee7b7;
 }
 .auth-layout-compact.role-admin .notice-info {
-  color: #5d438b;
-  background: #f7f3ff;
-  border-color: #e2d7f5;
+  color: #116149;
+  background: #effcf6;
+  border-color: #cceede;
 }
 .auth-panel {
   min-height: 100vh;

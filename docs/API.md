@@ -4,7 +4,7 @@ This frontend calls the existing Express API only. It never connects directly to
 
 ## Configuration and request conventions
 
-- The API origin is configured with `VITE_API_BASE_URL`; it defaults to `http://localhost:3500`.
+- The API origin is configured with `VITE_API_BASE_URL`; it defaults to `http://localhost:4000`.
 - Set the backend `CORS_ORIGINS` to include the frontend's origin (Vite defaults to `http://localhost:5173`).
 - JSON requests send `Accept: application/json` and `Content-Type: application/json`. Protected requests include `Authorization: Bearer <token>`.
 - API requests time out after 20 seconds. A timed-out request shows a clear error and can be submitted again manually; credentials are never retried automatically.

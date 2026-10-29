@@ -38,9 +38,7 @@ export function ChangePasswordPage() {
         <Link to="/" className="brand auth-brand"><span className="brand-mark"><Droplets size={21} /></span><span><b>Cagnar Farm</b><small>Utility portal</small></span></Link>
         <div className="auth-content">
           <div className="eyebrow">ACCOUNT SECURITY</div><h1>{mustChangePassword ? 'Set a new password.' : 'Change your password.'}</h1><p className="auth-lede">{mustChangePassword ? 'Replace your temporary password to continue.' : 'Update your password whenever you need to keep your account secure.'}</p>
-          {mustChangePassword
-            ? <div className="notice notice-warning"><AlertCircle size={17} /><div><strong>Temporary password in use</strong><p>Your initial password is based on your phone number. Change it now and do not share it.</p></div></div>
-            : <div className="notice notice-info"><ShieldCheck size={17} /><div><strong>Self-service password change</strong><p>You can change your password here without contacting an administrator. You will need to sign in again afterward.</p></div></div>}
+          {mustChangePassword && <div className="notice notice-warning"><AlertCircle size={17} /><div><strong>Temporary password in use</strong><p>Your initial password is based on your phone number. Change it now and do not share it.</p></div></div>}
           <form className="form-stack" onSubmit={handleSubmit((values) => mutation.mutate(values))} noValidate>
             <Field label="Current password" error={errors.currentPassword?.message}><PasswordInput autoComplete="current-password" {...register('currentPassword')} /></Field>
             <Field label="New password" hint="At least 8 characters; maximum 72 UTF-8 bytes." error={errors.newPassword?.message}><PasswordInput autoComplete="new-password" {...register('newPassword')} /></Field>

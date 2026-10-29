@@ -135,10 +135,18 @@ function SessionInactivityGuard({ children }) {
 }
 
 function App() {
+  const user = useAuthStore((state) => state.user)
+  const toastRole = user?.role?.toLowerCase() || 'consumer'
+
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <Toaster position="top-right" richColors closeButton />
+        <Toaster
+          position="top-right"
+          theme="light"
+          className={`app-toaster role-${toastRole}`}
+          closeButton
+        />
         <Suspense fallback={<main className="auth-loading" role="status">Loading portal…</main>}>
           <SessionInactivityGuard>
             <AuthRouter />

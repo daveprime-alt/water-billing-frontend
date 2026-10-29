@@ -2,11 +2,10 @@ import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { Link, Navigate, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { CircleHelp, Droplets, KeyRound, LogOut, Menu, MoreHorizontal, Settings2 } from 'lucide-react'
-import { toast } from 'sonner'
 import { api } from '../../services/api.js'
 import { roleLabels, roleLinks } from '../../config/navigation.js'
 import { useAuthStore } from '../../stores/authStore.js'
-import { getMessage, nameOf } from '../../utils/formatters.js'
+import { nameOf } from '../../utils/formatters.js'
 import { LoadingState, NotFoundPage } from '../ui/index.jsx'
 
 const Dashboard = lazy(() => import('../dashboard/Dashboard.jsx').then(({ Dashboard: page }) => ({ default: page })))
@@ -28,8 +27,6 @@ export function AppShell() {
   const queryClient = useQueryClient()
   const logoutMutation = useMutation({
     mutationFn: api.logout,
-    onSuccess: () => toast.success('You have been signed out.'),
-    onError: (error) => toast.error(`Signed out locally. ${getMessage(error)}`),
     onSettled: () => {
       clearSession()
       queryClient.clear()
