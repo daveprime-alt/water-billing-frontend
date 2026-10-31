@@ -41,22 +41,6 @@ See [docs/API.md](./docs/API.md) for the full frontend API reference, including 
 
 Only the public API base URL belongs in frontend configuration. Do not add database credentials, Daraja credentials, or signing secrets to Vite environment variables. The browser talks only to the Express API.
 
-## Docker
-
-Build and run the production frontend with Docker Compose:
-
-```sh
-docker compose up --build
-```
-
-Open [http://localhost:8080](http://localhost:8080). The default API origin is `http://localhost:4000`. To use another API origin, set `VITE_API_BASE_URL` when building:
-
-```sh
-VITE_API_BASE_URL=https://api.example.com docker compose up --build
-```
-
-`VITE_API_BASE_URL` is embedded into the frontend bundle at build time, so rebuild the image after changing it. It must be an origin the user's browser can reach; a Docker-only service name such as `http://api:3500` will not resolve in the browser. Configure the API's `CORS_ORIGINS` to allow the frontend origin (for the local Compose setup, `http://localhost:8080`). The image uses Nginx to serve the static build and fall back to `index.html` for client-side routes.
-
 ## Implemented API flows
 
 - Provisioned-user login, temporary-password change, profile read/update, and API logout.
