@@ -7,6 +7,7 @@ import { AlertCircle, ArrowRight, Check, Plus, Search, ShieldCheck, Upload, User
 import { toast } from 'sonner'
 import { api } from '../services/api.js'
 import { getMessage } from '../utils/formatters.js'
+import { notifyError } from '../utils/notifications.js'
 import { ConfirmDialog, ErrorState, Field, PageTitle } from '../components/ui/index.jsx'
 import { UserDirectorySearch } from '../components/accounts/UserDirectorySearch.jsx'
 
@@ -38,18 +39,18 @@ export function AccountsPage() {
   const createMutation = useMutation({
     mutationFn: api.createUser,
     onSuccess: (result) => { setCreatedAccount(result); toast.success('Account created.'); reset({ role: 'CONSUMER' }) },
-    onError: (error) => toast.error(getMessage(error)),
+    onError: (error) => notifyError(getMessage(error)),
   })
   const importMutation = useMutation({
     mutationFn: api.importCustomers,
     onSuccess: (result) => { toast.success('Import completed.'); setUploadFile(null); queryClient.invalidateQueries({ queryKey: ['invoices'] }); setImportResult(result) },
-    onError: (error) => toast.error(getMessage(error)),
+    onError: (error) => notifyError(getMessage(error)),
   })
   const [importResult, setImportResult] = useState(null)
   const resetMutation = useMutation({
     mutationFn: (id) => api.resetUserPassword(id),
     onSuccess: (result) => { toast.success(result?.message || 'Temporary password reset. Verify the user outside the app.'); setResetConfirmation(false) },
-    onError: (error) => { toast.error(getMessage(error)); setResetConfirmation(false) },
+    onError: (error) => { notifyError(getMessage(error)); setResetConfirmation(false) },
   })
   const phoneSchema = z.object({ phoneNumber: z.string().trim().regex(/^(?:\+?254|0)(?:7|1)\d{8}$/, 'Enter a valid Kenyan mobile number') })
   const { register: registerPhone, handleSubmit: handlePhoneSubmit, formState: { errors: phoneErrors }, reset: resetPhone } = useForm({ resolver: zodResolver(phoneSchema) })
@@ -62,7 +63,7 @@ export function AccountsPage() {
       queryClient.invalidateQueries({ queryKey: ['user-directory'] })
       queryClient.invalidateQueries({ queryKey: ['user-directory-all-consumers'] })
     },
-    onError: (error) => { toast.error(getMessage(error)); setPhoneConfirmation(false) },
+    onError: (error) => { notifyError(getMessage(error)); setPhoneConfirmation(false) },
   })
   const deleteMutation = useMutation({
     mutationFn: api.deleteUser,
@@ -74,7 +75,7 @@ export function AccountsPage() {
       queryClient.invalidateQueries({ queryKey: ['user-directory'] })
       queryClient.invalidateQueries({ queryKey: ['user-directory-all-consumers'] })
     },
-    onError: (error) => toast.error(getMessage(error)),
+    onError: (error) => notifyError(getMessage(error)),
   })
   const removePhoneMutation = useMutation({
     mutationFn: api.deleteUserPhone,
@@ -85,7 +86,7 @@ export function AccountsPage() {
       queryClient.invalidateQueries({ queryKey: ['user-directory-all-consumers'] })
     },
     onError: (error) => {
-      toast.error(getMessage(error))
+      notifyError(getMessage(error))
       setRemovePhoneTarget(null)
     },
   })

@@ -4,10 +4,10 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod/v3'
 import { ArrowRight, Droplets, LoaderCircle, ShieldCheck } from 'lucide-react'
-import { toast } from 'sonner'
 import { api, } from '../services/api.js'
 import { useAuthStore } from '../stores/authStore.js'
 import { getMessage } from '../utils/formatters.js'
+import { notifyError } from '../utils/notifications.js'
 import { PasswordInput } from '../components/ui/index.jsx'
 
 export function LoginPage() {
@@ -28,7 +28,7 @@ export function LoginPage() {
       if (result.mustChangePassword) navigate('/change-password', { replace: true })
       else navigate('/', { replace: true })
     },
-    onError: (error) => toast.error(getMessage(error)),
+    onError: (error) => notifyError(getMessage(error)),
   })
   return (
     <main className="grid min-h-screen grid-cols-1 grid-rows-[1fr_auto] bg-white md:grid-cols-[1.1fr_0.9fr]">
@@ -89,11 +89,6 @@ export function LoginPage() {
               {mutation.isPending ? <><LoaderCircle size={17} className="animate-spin" /> Signing in</> : <>Sign in <ArrowRight size={17} /></>}
             </button>
           </form>
-          {mutation.error && (
-            <div className="mt-5 flex items-start gap-3 rounded-md border border-red-200 bg-red-50 p-3 text-red-900" role="alert">
-              <span className="text-sm leading-relaxed">{getMessage(mutation.error)}</span>
-            </div>
-          )}
         </div>
       </section>
       <aside className="login-aside-panel grid min-h-[230px] place-items-center bg-[#123b51] px-6 py-9 text-white sm:px-8 md:min-h-0 md:px-[clamp(2rem,6vw,4.875rem)] md:py-12 max-[413px]:hidden" aria-label="About the utility portal">

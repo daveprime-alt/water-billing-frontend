@@ -4,6 +4,7 @@ import { AlertCircle, Bell, ChevronLeft, ChevronRight, Clock3, MessageSquare, Pa
 import { toast } from 'sonner'
 import { api, ApiError } from '../services/api.js'
 import { nameOf } from '../utils/formatters.js'
+import { notifyError } from '../utils/notifications.js'
 import { ConfirmDialog, Field, LoadingState, PageTitle } from '../components/ui/index.jsx'
 
 const PAGE_SIZE = 25
@@ -151,7 +152,7 @@ function SmsQueue() {
       queryClient.invalidateQueries({ queryKey: ['admin-sms', 'messages'] })
     },
     onError: (error) => {
-      toast.error(error instanceof ApiError && error.status === 403 ? 'You are not permitted to retry this message.' : 'The message could not be retried.')
+      notifyError(error instanceof ApiError && error.status === 403 ? 'You are not permitted to retry this message.' : 'The message could not be retried.')
       setRetryTarget(null)
     },
   })
@@ -204,7 +205,7 @@ function SmsPreferences() {
       toast.success(variables.value ? 'Announcement opt-out recorded.' : 'Announcement opt-out cleared.')
       queryClient.invalidateQueries({ queryKey: ['admin-sms', 'preferences'] })
     },
-    onError: (error) => toast.error(error instanceof ApiError && error.status === 403 ? 'You are not permitted to change this preference.' : 'The preference could not be updated.'),
+    onError: (error) => notifyError(error instanceof ApiError && error.status === 403 ? 'You are not permitted to change this preference.' : 'The preference could not be updated.'),
   })
 
   return (
@@ -275,7 +276,7 @@ function SmsCampaigns() {
       toast.success('Announcement draft created. Preview the recipients before sending.')
       queryClient.invalidateQueries({ queryKey: ['admin-sms', 'campaigns'] })
     },
-    onError: (error) => toast.error(error instanceof ApiError && error.status === 403 ? 'You are not permitted to create announcements.' : 'The announcement draft could not be created.'),
+    onError: (error) => notifyError(error instanceof ApiError && error.status === 403 ? 'You are not permitted to create announcements.' : 'The announcement draft could not be created.'),
   })
   const previewMutation = useMutation({
     mutationFn: api.previewSmsCampaign,
@@ -284,7 +285,7 @@ function SmsCampaigns() {
       setPreviewState({ id, data, createdAt: Date.now(), expiresAt: data?.previewExpiresAt ?? data?.expiresAt })
       toast.success('Fresh recipient preview ready.')
     },
-    onError: (error) => toast.error(error instanceof ApiError && error.status === 403 ? 'You are not permitted to preview this announcement.' : 'The recipient preview could not be created.'),
+    onError: (error) => notifyError(error instanceof ApiError && error.status === 403 ? 'You are not permitted to preview this announcement.' : 'The recipient preview could not be created.'),
   })
   const confirmMutation = useMutation({
     mutationFn: api.confirmSmsCampaign,
@@ -298,9 +299,9 @@ function SmsCampaigns() {
       setConfirmSend(false)
       if (error instanceof ApiError && error.status === 409) {
         setPreviewState(null)
-        toast.error('The eligible recipient count changed. Create a fresh preview before confirming.')
+        notifyError('The eligible recipient count changed. Create a fresh preview before confirming.')
       } else {
-        toast.error(error instanceof ApiError && error.status === 403 ? 'You are not permitted to send this announcement.' : 'The announcement could not be confirmed.')
+        notifyError(error instanceof ApiError && error.status === 403 ? 'You are not permitted to send this announcement.' : 'The announcement could not be confirmed.')
       }
     },
   })
@@ -310,7 +311,7 @@ function SmsCampaigns() {
       toast.success(variables.action === 'pause' ? 'Announcement paused.' : 'Announcement resumed.')
       queryClient.invalidateQueries({ queryKey: ['admin-sms', 'campaigns'] })
     },
-    onError: () => toast.error('The announcement status could not be changed.'),
+    onError: () => notifyError('The announcement status could not be changed.'),
   })
 
   const selectedId = campaignId(selectedCampaign)

@@ -6,6 +6,7 @@ import { api, formatKes, formatMonth } from '../services/api.js'
 import { useAuthStore } from '../stores/authStore.js'
 import { getMessage } from '../utils/formatters.js'
 import { invoiceUsageLabel, latestReceivableBalance, summarizeInvoices } from '../utils/invoices.js'
+import { notifyError } from '../utils/notifications.js'
 import { ConfirmDialog, EmptyState, ErrorState, LoadingState, PageTitle, StatusBadge } from '../components/ui/index.jsx'
 import { PaymentDialog } from '../components/invoices/PaymentDialog.jsx'
 
@@ -24,12 +25,12 @@ export function InvoicesPage() {
       await queryClient.invalidateQueries({ queryKey: ['invoices'] })
       await invoicesQuery.refetch()
     },
-    onError: (error) => toast.error(getMessage(error)),
+    onError: (error) => notifyError(getMessage(error)),
   })
   const cancelMutation = useMutation({
     mutationFn: (id) => api.cancelInvoice(id),
     onSuccess: () => { toast.success('Invoice cancelled.'); setCancelId(null); queryClient.invalidateQueries({ queryKey: ['invoices'] }) },
-    onError: (error) => { setCancelId(null); toast.error(getMessage(error)) },
+    onError: (error) => { setCancelId(null); notifyError(getMessage(error)) },
   })
   const invoices = Array.isArray(invoicesQuery.data) ? invoicesQuery.data : []
   const summary = summarizeInvoices(invoices)

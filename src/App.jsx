@@ -6,6 +6,7 @@ import { AppShell } from './components/layout/AppShell.jsx'
 import { useAuthStore } from './stores/authStore.js'
 import { api } from './services/api.js'
 import { getMessage } from './utils/formatters.js'
+import { notifyError } from './utils/notifications.js'
 import './App.css'
 
 const INACTIVITY_TIMEOUT_MS = 10 * 60 * 1000
@@ -40,7 +41,7 @@ function AuthRouter() {
   const mustChangePassword = useAuthStore((state) => state.mustChangePassword)
 
   useEffect(() => {
-    const handleExpiredSession = () => toast.error('Your session expired. Please sign in again.')
+    const handleExpiredSession = () => notifyError('Your session expired. Please sign in again.')
     window.addEventListener('water-billing:unauthorized', handleExpiredSession)
     return () => window.removeEventListener('water-billing:unauthorized', handleExpiredSession)
   }, [])
@@ -146,6 +147,7 @@ function App() {
           theme="light"
           className={`app-toaster role-${toastRole}`}
           closeButton
+          visibleToasts={1}
         />
         <Suspense fallback={<main className="auth-loading" role="status">Loading portal…</main>}>
           <SessionInactivityGuard>

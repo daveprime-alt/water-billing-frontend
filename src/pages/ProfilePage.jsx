@@ -10,6 +10,7 @@ import { api } from '../services/api.js'
 import { useAuthStore } from '../stores/authStore.js'
 import { roleLabels } from '../config/navigation.js'
 import { getMessage, nameOf } from '../utils/formatters.js'
+import { notifyError } from '../utils/notifications.js'
 import { ErrorState, Field, LoadingState, PageTitle } from '../components/ui/index.jsx'
 
 export function ProfilePage() {
@@ -39,7 +40,7 @@ export function ProfilePage() {
       toast.success('Profile updated.')
       queryClient.invalidateQueries({ queryKey: ['profile'] })
     },
-    onError: (error) => toast.error(getMessage(error)),
+    onError: (error) => notifyError(getMessage(error)),
   })
   const displayedUser = profileQuery.data || user
   return <>

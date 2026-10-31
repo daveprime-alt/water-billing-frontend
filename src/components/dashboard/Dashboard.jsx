@@ -9,6 +9,7 @@ import { useReadingsQuery } from '../../hooks/useReadingsQuery.js'
 import { readingsForDisplay } from '../../utils/readings.js'
 import { invoiceUsageLabel, summarizeInvoices } from '../../utils/invoices.js'
 import { getMessage } from '../../utils/formatters.js'
+import { notifyError } from '../../utils/notifications.js'
 import { EmptyState, ErrorState, LoadingState, PageTitle, StatusBadge } from '../ui/index.jsx'
 import { PaymentDialog } from '../invoices/PaymentDialog.jsx'
 
@@ -34,7 +35,7 @@ export function Dashboard() {
       setPaymentInvoice(null)
       await queryClient.invalidateQueries({ queryKey: ['invoices'] })
     },
-    onError: (error) => toast.error(getMessage(error)),
+    onError: (error) => notifyError(getMessage(error)),
   })
   const invoices = Array.isArray(invoicesQuery.data) ? invoicesQuery.data : []
   const readings = readingsForDisplay(readingsQuery.data, role, readingsQuery.isFetching, readingsQuery.isError)

@@ -8,7 +8,8 @@ import { toast } from 'sonner'
 import { api } from '../services/api.js'
 import { useAuthStore } from '../stores/authStore.js'
 import { getMessage } from '../utils/formatters.js'
-import { ErrorState, Field, PasswordInput } from '../components/ui/index.jsx'
+import { notifyError } from '../utils/notifications.js'
+import { Field, PasswordInput } from '../components/ui/index.jsx'
 
 export function ChangePasswordPage() {
   const clearSession = useAuthStore((state) => state.clearSession)
@@ -30,7 +31,7 @@ export function ChangePasswordPage() {
       clearSession()
       navigate('/login', { replace: true })
     },
-    onError: (error) => toast.error(getMessage(error)),
+    onError: (error) => notifyError(getMessage(error)),
   })
   return (
     <div className={`auth-layout auth-layout-compact ${roleClass}`}>
@@ -46,7 +47,6 @@ export function ChangePasswordPage() {
             <button className="button button-primary button-full" disabled={mutation.isPending}>{mutation.isPending ? <><LoaderCircle size={16} className="spin" /> Saving password</> : <>Update password <ArrowRight size={16} /></>}</button>
             {mustChangePassword && <Link className="button button-secondary button-full" to="/"><Home size={16} /> Back to home</Link>}
           </form>
-          {mutation.error && <ErrorState error={mutation.error} />}
         </div>
         <div className="auth-footer"><span>© {new Date().getFullYear()} Cagnar Farm</span></div>
       </section>

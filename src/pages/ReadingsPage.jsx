@@ -10,6 +10,7 @@ import { api, formatMonth } from '../services/api.js'
 import { useAuthStore } from '../stores/authStore.js'
 import { useReadingsQuery } from '../hooks/useReadingsQuery.js'
 import { getMessage } from '../utils/formatters.js'
+import { notifyError } from '../utils/notifications.js'
 import { canEditReading, currentUtcBillingMonth, readingUpdateErrorMessage, readingsForDisplay } from '../utils/readings.js'
 import { ConfirmDialog, EmptyState, ErrorState, Field, LoadingState, Modal, PageTitle } from '../components/ui/index.jsx'
 import { UserDirectorySearch } from '../components/accounts/UserDirectorySearch.jsx'
@@ -35,19 +36,19 @@ export function ReadingsPage() {
       if (result?.usageReview?.onHold) toast.warning(`This invoice is held for admin review. Previous reading average: ${result.usageReview.averageUnits ?? 'not available'} units.`)
       reset(); setSelectedCustomer(null); setShowForm(false); queryClient.invalidateQueries({ queryKey: ['readings'] }); queryClient.invalidateQueries({ queryKey: ['invoices'] })
     },
-    onError: (error) => toast.error(getMessage(error)),
+    onError: (error) => notifyError(getMessage(error)),
   })
   const updateSchema = z.object({ currentReading: z.coerce.number().int('Enter a whole number').min(0).max(99999) })
   const { register: registerEdit, handleSubmit: handleEditSubmit, reset: resetEdit, formState: { errors: editErrors } } = useForm({ resolver: zodResolver(updateSchema) })
   const updateMutation = useMutation({
     mutationFn: ({ id, currentReading }) => api.updateReading(id, { currentReading }),
     onSuccess: () => { toast.success('Reading corrected.'); setEditing(null); queryClient.invalidateQueries({ queryKey: ['readings'] }); queryClient.invalidateQueries({ queryKey: ['invoices'] }) },
-    onError: (error) => toast.error(role === 'READER' ? readingUpdateErrorMessage(error) : getMessage(error)),
+    onError: (error) => notifyError(role === 'READER' ? readingUpdateErrorMessage(error) : getMessage(error)),
   })
   const deleteMutation = useMutation({
     mutationFn: api.deleteReading,
     onSuccess: () => { toast.success('Reading deleted.'); setDeleting(null); queryClient.invalidateQueries({ queryKey: ['readings'] }) },
-    onError: (error) => { setDeleting(null); toast.error(getMessage(error)) },
+    onError: (error) => { setDeleting(null); notifyError(getMessage(error)) },
   })
   const readings = useMemo(() => readingsForDisplay(readingsQuery.data, role, readingsQuery.isFetching, readingsQuery.isError), [readingsQuery.data, readingsQuery.isError, readingsQuery.isFetching, role])
   const consumers = useMemo(() => {
@@ -87,7 +88,7 @@ export function ReadingsPage() {
   const billingMonth = currentUtcBillingMonth()
   const submitEdit = handleEditSubmit(({ currentReading }) => {
     if (!canEditReading(editing, role, userId, currentUtcBillingMonth())) {
-      toast.error(readingUpdateErrorMessage({ status: 403 }))
+      notifyError(readingUpdateErrorMessage({ status: 403 }))
       return
     }
     updateMutation.mutate({ id: editing.id, currentReading })
