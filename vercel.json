@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://water-billing-utility.vercel.app/api/:path*"
+    },
+    {
+      "source": "/health",
+      "destination": "https://water-billing-utility.vercel.app/health"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

@@ -4,8 +4,8 @@ This frontend calls the existing Express API only. It never connects directly to
 
 ## Configuration and request conventions
 
-- The API origin is configured with `VITE_API_BASE_URL`; it defaults to `http://localhost:4000`.
-- Set the backend `CORS_ORIGINS` to include the frontend's origin (Vite defaults to `http://localhost:5173`).
+- In production, the frontend uses same-origin API paths. Vercel rewrites `/api/*` and `/health` to the deployed API origin, avoiding browser CORS restrictions.
+- During local development, `VITE_API_BASE_URL` sets the API origin and defaults to `http://localhost:4000`; direct calls to a remote API require its `CORS_ORIGINS` to allow the Vite origin.
 - JSON requests send `Accept: application/json` and `Content-Type: application/json`. Protected requests include `Authorization: Bearer <token>`.
 - API requests time out after 20 seconds. A timed-out request shows a clear error and can be submitted again manually; credentials are never retried automatically.
 - Customer import is `multipart/form-data`, with a file field named `file`; the browser sets the multipart boundary.

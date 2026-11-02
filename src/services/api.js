@@ -20,7 +20,8 @@ const API_REQUEST_TIMEOUT_MS = 20_000
  */
 
 export function getApiBaseUrl() {
-  return (import.meta.env.VITE_API_BASE_URL).replace(/\/+$/, '')
+  const apiBaseUrl = import.meta.env.PROD ? '' : import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000'
+  return apiBaseUrl.replace(/\/+$/, '')
 }
 
 export class ApiError extends Error {

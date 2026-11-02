@@ -34,12 +34,16 @@ See [docs/API.md](./docs/API.md) for the full frontend API reference, including 
 
 ## Local development
 
-1. Copy `.env.example` to `.env.local` and set `VITE_API_BASE_URL` to the public API origin (defaults to `http://localhost:4000`).
+1. Optionally set `VITE_API_BASE_URL` in `.env.local` to the API origin (defaults to `http://localhost:4000`).
 2. Run `npm install` if dependencies are not installed.
 3. Run `npm run dev`.
-4. Configure the backend's `CORS_ORIGINS` to include the Vite origin shown in the terminal (normally `http://localhost:5173`).
+4. If calling a remote API directly during local development, configure its `CORS_ORIGINS` to include the Vite origin (normally `http://localhost:5173`).
 
 Only the public API base URL belongs in frontend configuration. Do not add database credentials, Daraja credentials, or signing secrets to Vite environment variables. The browser talks only to the Express API.
+
+## Vercel deployment
+
+Deploy this project to Vercel with the `npm run build` build command and `dist` output directory. Production API requests use same-origin paths; [vercel.json](./vercel.json) proxies `/api/*` and `/health` to `https://water-billing-utility.vercel.app`, avoiding browser CORS restrictions. No `VITE_API_BASE_URL` production environment variable is required. The catch-all rewrite serves the SPA for client-side routes.
 
 ## Implemented API flows
 
